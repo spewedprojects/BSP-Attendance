@@ -13,3 +13,5 @@
 .externalNativeBuild
 .cxx
 local.properties
+/misc/
+/node_modules/

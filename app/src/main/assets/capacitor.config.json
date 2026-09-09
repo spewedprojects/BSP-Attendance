@@ -1,0 +1,8 @@
+{
+	"appId": "com.gratus.bspattendance",
+	"appName": "BSP Attendance",
+	"webDir": "dist",
+	"android": {
+		"path": "."
+	}
+}
