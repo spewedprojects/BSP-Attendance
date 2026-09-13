@@ -10,8 +10,8 @@ android {
         applicationId = "com.gratus.bspattendance"
         minSdk = 26
         targetSdk = 36
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = 2
+        versionName = "2.0.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -39,6 +39,8 @@ dependencies {
     // Capacitor Native Bridge and Plugins
     implementation(project(":capacitor-android"))
     implementation(project(":capacitor-preferences"))
+    implementation(project(":capacitor-filesystem"))
+    implementation(project(":capacitor-share"))
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

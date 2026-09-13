@@ -23,6 +23,29 @@ export function fmtDateHeader(dstr: string): string {
 }
 
 /**
+ * Shift a YYYY-MM-DD date by offsetDays (e.g. -1 for yesterday, +1 for tomorrow)
+ */
+export function shiftDate(dstr: string, offsetDays: number): string {
+  const d = new Date(dstr + 'T00:00:00');
+  d.setDate(d.getDate() + offsetDays);
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
+/**
+ * Format current or provided time as "08:30 AM"
+ */
+export function formatTimeAMPM(d: Date = new Date()): string {
+  return d.toLocaleTimeString('en-US', {
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: true,
+  });
+}
+
+/**
  * Generate unique worker ID
  */
 export function uid(): string {
@@ -67,6 +90,52 @@ export function groupBy<T, K>(arr: T[], keyFn: (item: T) => K): Map<K, T[]> {
     list.push(item);
   }
   return map;
+}
+
+/**
+ * Convert headers and 2D row array to CSV string with quotes handling
+ */
+export function generateCsvString(headers: string[], rows: (string | number)[][]): string {
+  const escapeCsvCell = (cell: string | number) => {
+    const s = String(cell ?? '').replace(/"/g, '""');
+    return /[",\n\r]/.test(s) ? `"${s}"` : s;
+  };
+
+  const lines = [
+    headers.map(escapeCsvCell).join(','),
+    ...rows.map((row) => row.map(escapeCsvCell).join(',')),
+  ];
+  return lines.join('\r\n');
+}
+
+/**
+ * Simple CSV parser for import
+ */
+export function parseSimpleCsv(text: string): string[][] {
+  const lines = text.split(/\r?\n/).map((l) => l.trim()).filter(Boolean);
+  return lines.map((line) => {
+    const values: string[] = [];
+    let current = '';
+    let inQuotes = false;
+    for (let i = 0; i < line.length; i++) {
+      const c = line[i];
+      if (c === '"') {
+        if (inQuotes && line[i + 1] === '"') {
+          current += '"';
+          i++;
+        } else {
+          inQuotes = !inQuotes;
+        }
+      } else if (c === ',' && !inQuotes) {
+        values.push(current.trim());
+        current = '';
+      } else {
+        current += c;
+      }
+    }
+    values.push(current.trim());
+    return values;
+  });
 }
 
 /**
